@@ -22,7 +22,9 @@ services:
     command: server /data --console-address ":9001"
 
   spark_notebook:
-    image: alexmerced/spark33-notebook
+    image: spark_notebook
+    volumes:
+      - ./notebooks:/home/docker/notebooks
     ports: 
       - 8888:8888
     env_file: .env
