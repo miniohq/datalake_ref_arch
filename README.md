@@ -1,17 +1,16 @@
 # Modern Datalake Reference Architecture
-
-This repo contains the configuration necessary to spin up a MinIO powered open-source and modern data lake on a single machine. It can be used for training, experimentation, curriculum development, hands-on demonstration. 
+This repo contains the configuration necessary to spin up a MinIO powered open-source and modern data lake. It can be used for training, experimentation, curriculum development, and hands-on demonstration. It is not production-grade.
 
 ### Key Components
 - [MinIO](https://min.io/docs/minio/linux/index.html) - S3 compatible object storage layer for data
-- [Dremio](https://docs.dremio.com/) - Used for running SQL queries and as a catalog service.
-- [Apache Iceberg](https://iceberg.apache.org/docs/1.3.1/) - The table format we use to store our data in the lake giving us many benefits like ACID compliance, schema evolution, time travel.
-- [Project Nessie](https://projectnessie.org/) - Git like version control for data
-- [Apache Spark](https://spark.apache.org/docs/latest/) - Our compute engine for data ingestion
-- [Jupyter Notebooks](https://docs.jupyter.org/en/latest/) - An interactive python environment for data science and data engineering
+- [Dremio](https://docs.dremio.com/) - A lakehouse management service that offers a data catalog, SQL interface, and Iceberg compatible compute engine.
+- [Apache Iceberg](https://iceberg.apache.org/docs/1.3.1/) - The table format we use to store our data in the lake giving us many benefits like ACID compliance, schema evolution, and data time travel.
+- [Project Nessie](https://projectnessie.org/) - Git like version control for data.
+- [Apache Spark](https://spark.apache.org/docs/latest/) - Our compute engine for data ingestion and transformation.
+- [Jupyter Notebooks](https://docs.jupyter.org/en/latest/) - An interactive python environment for data science and data engineering.
 
 ### Building the Docker Image locally
-Note that our docker-compose.yml references a local image for spark_notebook that needs to be built before we can spin up the environment.
+Note that our docker-compose.yml references a local image for spark_notebook that needs to be built before we can spin up the environment with compose.
 ```bash
 $ docker build -t spark_notebook .
 ```
@@ -27,9 +26,9 @@ We will spin up our docker services individually in separate terminals to make l
     ```bash
     $ docker-compose up minioserver
     ```
-1. Log into the minio web UI at localhost:9001 using username minioadmin password minioadmin
-1. In minio create a new bucket called "warehouse" this is where we will be storing our ingested data.
-1. In minio create an access key - copy the access key and secret key into you .env file under AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY respectively.
+1. Log into the minio web UI at localhost:9001 using username=minioadmin password=minioadmin
+1. In minio create a new bucket called "warehouse". This is where we will be storing our ingested and processed data.
+1. In minio create an access key - copy the access key and secret key into the .env file in the root under AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY respectively.
 1. Spin up jupyter notebooks with spark
     ```bash
     $ docker compose up spark_notebook
@@ -38,7 +37,7 @@ We will spin up our docker services individually in separate terminals to make l
     ```bash
     $ docker compose up nessie dremio
     ```
-1. Login to jupyter notebooks using the login URL+token you will need to find a line inside the logs of the notebook container that looks something like this:
+1. Login to jupyter notebooks using the login URL+token. You will find this inside the logs of the spark_notebook container and it generally looks something like this:
     ```
         To access the server, open this file in a browser:
             file:///home/docker/.local/share/jupyter/runtime/jpserver-12-open.html
@@ -46,9 +45,9 @@ We will spin up our docker services individually in separate terminals to make l
             http://aa164f013267:8888/tree?token=37ef29fcfb6179914503d30d17ba470ba1e3a38d23468644
             http://127.0.0.1:8888/tree?token=37ef29fcfb6179914503d30d17ba470ba1e3a38d23468644
     ```
-1. In Jupyter run notebooks/spark_table_create.ipynb to use spark to create our first Iceberg table and register it with Nessie.
-1. Login to Dremio at http://localhost:9047/ . You will need create a new account.
-1. Inside dremio click on Add Source and Select Nessie. Use the following values:
+1. Inside Jupyter run notebooks/spark_table_create.ipynb to use spark to create our first Iceberg table and register it with Nessie.
+1. Login to Dremio at http://localhost:9047/ . You will need create a new admin account in order login.
+1. Now lets add Nessie as a catalog inside Dremio so we can easily query our tables. To do this click on Add Source and Select Nessie. Use the following values:
     ```
     General Section
         Name=Nessie
@@ -60,14 +59,14 @@ We will spin up our docker services individually in separate terminals to make l
         AWS Secret Key=[AWS_SECRET_ACCESS_KEY from .env]
         Encrypt Connection=Unchecked
     ```
-1. Add the following custom connection properties and then add the source to dremio
+1. Add the following custom connection properties and then add the source to Dremio:
     ```
         Name: fs.s3a.path.style.access Value: true
         Name: fs.s3a.endpoint Value: minio:9000
         Name: dremio.s3.compat Value: true
     ```
 
-1. You should now be able to click on the nessie.names table in dremio and run a the following query to view the data we previously inserted in the spark notebook:
+1. You should now be able to click on the nessie.names table in Dremio and run the following query to view the data we previously inserted in the spark notebook:
     ```
     SELECT * FROM Nessie.names;
     ```
