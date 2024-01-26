@@ -48,7 +48,9 @@ RUN . ~/.bashrc
 RUN sudo apt-get install python3 python3-dev -y
 RUN sudo wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
 RUN sudo wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.4.3/iceberg-spark-runtime-3.5_2.12-1.4.3.jar
-RUN sudo mkdir /opt/spark
+RUN sudo mkdir -p /opt/spark/jars
+RUN sudo mv iceberg-spark-runtime-3.5_2.12-1.4.3.jar /opt/spark/jars/
+RUN sudo chown docker:docker /opt/spark/jars/iceberg-spark-runtime-3.5_2.12-1.4.3.jar
 # RUN sudo tar -xvzf spark-3.3.0-bin-hadoop3.2.tgz -C /opt/spark
 RUN sudo tar -xf spark-3.5.0-bin-hadoop3.tgz -C /opt/spark --strip-component 1
 RUN sudo chmod -R 777 /opt/spark

@@ -28,7 +28,7 @@ We will spin up our docker services individually in separate terminals to make l
     ```
 1. Log into the minio web UI at localhost:9001 using username=minioadmin password=minioadmin
 1. In minio create a new bucket called "warehouse". This is where we will be storing our ingested and processed data.
-1. In minio create an access key - copy the access key and secret key into the .env file in the root under AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY respectively.
+1. In minio create an access key - copy the access key and secret key into the .env file in the root under MINIO_ACCESS_KEY and MINIO_SECRET_ACCESS_KEY respectively.
 1. Spin up jupyter notebooks with spark
     ```bash
     $ docker compose up spark_notebook
@@ -55,8 +55,8 @@ We will spin up our docker services individually in separate terminals to make l
         Nessie Authentication Type=None
     Storage Section
         AWS Root path=s3://warehouse
-        AWS Access Key=[AWS_ACCESS_KEY_ID from .env]
-        AWS Secret Key=[AWS_SECRET_ACCESS_KEY from .env]
+        AWS Access Key=[MINIO_ACCESS_KEY from .env]
+        AWS Secret Key=[MINIO_SECRET_ACCESS_KEY from .env]
         Encrypt Connection=Unchecked
     ```
 1. Add the following custom connection properties and then add the source to Dremio:
