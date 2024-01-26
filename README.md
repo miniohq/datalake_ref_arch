@@ -37,14 +37,7 @@ We will spin up our docker services individually in separate terminals to make l
     ```bash
     $ docker compose up nessie dremio
     ```
-1. Login to jupyter notebooks using the login URL+token. You will find this inside the logs of the spark_notebook container and it generally looks something like this:
-    ```
-        To access the server, open this file in a browser:
-            file:///home/docker/.local/share/jupyter/runtime/jpserver-12-open.html
-        Or copy and paste one of these URLs:
-            http://aa164f013267:8888/tree?token=37ef29fcfb6179914503d30d17ba470ba1e3a38d23468644
-            http://127.0.0.1:8888/tree?token=37ef29fcfb6179914503d30d17ba470ba1e3a38d23468644
-    ```
+1. Navigate to Jupyter lab in your browser at http://127.0.0.1:8888/lab
 1. Inside Jupyter run notebooks/spark_table_create.ipynb to use spark to create our first Iceberg table and register it with Nessie.
 1. Login to Dremio at http://localhost:9047/ . You will need create a new admin account in order login.
 1. Now lets add Nessie as a catalog inside Dremio so we can easily query our tables. To do this click on Add Source and Select Nessie. Use the following values:

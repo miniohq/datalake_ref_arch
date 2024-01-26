@@ -60,7 +60,14 @@ RUN echo 'PYSPARK_PYTHON=/usr/bin/python3' >> ~/.bashrc
 RUN echo 'SPARK_MASTER_HOST=0.0.0.0' >> ~/.bashrc
 RUN . ~/.bashrc
 
-RUN pip install notebook pyspark
+# Add iceberg spark runtime jar to IJava classpath
+ENV IJAVA_CLASSPATH=/opt/spark/jars/*
+
+ARG jupyterlab_version=4.0.11
+ARG pyspark_version=3.5.0
+RUN pip install wget jupyterlab==${jupyterlab_version}
+RUN pip install pyspark==${pyspark_version}
+
 
 EXPOSE 8888
 EXPOSE 8080
@@ -70,5 +77,5 @@ EXPOSE 4040
 EXPOSE 18080
 EXPOSE 19120
 
-## Start Container
-CMD ~/.local/bin/jupyter-notebook --ip 0.0.0.0
+# ## Start Container
+CMD ~/.local/bin/jupyter-lab --notebook-dir=/home/docker/notebooks --NotebookApp.token='' --no-browser --allow-root --ip 0.0.0.0
