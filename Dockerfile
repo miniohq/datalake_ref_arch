@@ -48,7 +48,9 @@ RUN . ~/.bashrc
 RUN sudo apt-get install python3 python3-dev -y
 RUN sudo wget https://dlcdn.apache.org/spark/spark-3.5.0/spark-3.5.0-bin-hadoop3.tgz
 RUN sudo wget https://repo1.maven.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.4.3/iceberg-spark-runtime-3.5_2.12-1.4.3.jar
-RUN sudo mkdir /opt/spark
+RUN sudo mkdir -p /opt/spark/jars
+RUN sudo mv iceberg-spark-runtime-3.5_2.12-1.4.3.jar /opt/spark/jars/
+RUN sudo chown docker:docker /opt/spark/jars/iceberg-spark-runtime-3.5_2.12-1.4.3.jar
 # RUN sudo tar -xvzf spark-3.3.0-bin-hadoop3.2.tgz -C /opt/spark
 RUN sudo tar -xf spark-3.5.0-bin-hadoop3.tgz -C /opt/spark --strip-component 1
 RUN sudo chmod -R 777 /opt/spark
@@ -58,7 +60,14 @@ RUN echo 'PYSPARK_PYTHON=/usr/bin/python3' >> ~/.bashrc
 RUN echo 'SPARK_MASTER_HOST=0.0.0.0' >> ~/.bashrc
 RUN . ~/.bashrc
 
-RUN pip install notebook pyspark
+# Add iceberg spark runtime jar to IJava classpath
+ENV IJAVA_CLASSPATH=/opt/spark/jars/*
+
+ARG jupyterlab_version=4.0.11
+ARG pyspark_version=3.5.0
+RUN pip install wget jupyterlab==${jupyterlab_version}
+RUN pip install pyspark==${pyspark_version}
+
 
 EXPOSE 8888
 EXPOSE 8080
@@ -68,5 +77,5 @@ EXPOSE 4040
 EXPOSE 18080
 EXPOSE 19120
 
-## Start Container
-CMD ~/.local/bin/jupyter-notebook --ip 0.0.0.0
+# ## Start Container
+CMD ~/.local/bin/jupyter-lab --notebook-dir=/home/docker/notebooks --NotebookApp.token='' --no-browser --allow-root --ip 0.0.0.0
