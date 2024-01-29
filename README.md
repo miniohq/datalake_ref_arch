@@ -7,7 +7,7 @@ This repo contains the configuration necessary to spin up a MinIO powered open-s
 - [Apache Iceberg](https://iceberg.apache.org/docs/1.3.1/) - The table format we use to store our data in the lake giving us many benefits like ACID compliance, schema evolution, and data time travel.
 - [Project Nessie](https://projectnessie.org/) - Git like version control for data.
 - [Apache Spark](https://spark.apache.org/docs/latest/) - Our compute engine for data ingestion and transformation.
-- [Jupyter Notebooks](https://docs.jupyter.org/en/latest/) - An interactive python environment for data science and data engineering.
+- [JupyterLab](https://docs.jupyter.org/en/latest/) - An interactive python environment for data science and data engineering.
 
 ### Building the Docker Image locally
 Note that our docker-compose.yml references a local image for spark_notebook that needs to be built before we can spin up the environment with compose.
@@ -29,7 +29,7 @@ We will spin up our docker services individually in separate terminals to make l
 1. Log into the minio web UI at localhost:9001 using username=minioadmin password=minioadmin
 1. In minio create a new bucket called "warehouse". This is where we will be storing our ingested and processed data.
 1. In minio create an access key - copy the access key and secret key into the .env file in the root under MINIO_ACCESS_KEY and MINIO_SECRET_ACCESS_KEY respectively.
-1. Spin up jupyter notebooks with spark
+1. Spin up JupyterLab with spark
     ```bash
     $ docker compose up spark_notebook
     ```
@@ -37,7 +37,7 @@ We will spin up our docker services individually in separate terminals to make l
     ```bash
     $ docker compose up nessie dremio
     ```
-1. Navigate to Jupyter lab in your browser at http://127.0.0.1:8888/lab
+1. Navigate to JupyterLab in your browser at http://127.0.0.1:8888/lab
 1. Inside Jupyter run notebooks/spark_table_create.ipynb to use spark to create our first Iceberg table and register it with Nessie.
 1. Login to Dremio at http://localhost:9047/ . You will need create a new admin account in order login.
 1. Now lets add Nessie as a catalog inside Dremio so we can easily query our tables. To do this click on Add Source and Select Nessie. Use the following values:

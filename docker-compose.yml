@@ -25,6 +25,7 @@ services:
     image: spark_notebook
     volumes:
       - ./notebooks:/home/docker/notebooks
+      - ./data/:/home/docker/notebooks/data
     ports: 
       - 8888:8888
     env_file: .env
