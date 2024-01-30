@@ -17,26 +17,12 @@ $ docker build -t spark_notebook .
 
 
 ### Spinning up the environment
-We will spin up our docker services individually in separate terminals to make logging easier to track.
-1. Copy the .env.example file to .env
+1. We will spin up our services via docker compose.
     ```bash
-    $ cp .env.example .env
+    $ docker-compose up
     ```
-1. Spin up minio
-    ```bash
-    $ docker-compose up minioserver
-    ```
-1. Log into the minio web UI at localhost:9001 using username=minioadmin password=minioadmin
+1. Log into the minio web UI at http://localhost:9001 using username=minioadmin password=minioadmin
 1. In minio create a new bucket called "warehouse". This is where we will be storing our ingested and processed data.
-1. In minio create an access key - copy the access key and secret key into the .env file in the root under MINIO_ACCESS_KEY and MINIO_SECRET_ACCESS_KEY respectively.
-1. Spin up JupyterLab with spark
-    ```bash
-    $ docker compose up spark_notebook
-    ```
-1. Spin up the remaining services in the compose file
-    ```bash
-    $ docker compose up nessie dremio
-    ```
 1. Navigate to JupyterLab in your browser at http://127.0.0.1:8888/lab
 1. Inside Jupyter run notebooks/spark_table_create.ipynb to use spark to create our first Iceberg table and register it with Nessie.
 1. Login to Dremio at http://localhost:9047/ . You will need create a new admin account in order login.
@@ -48,8 +34,8 @@ We will spin up our docker services individually in separate terminals to make l
         Nessie Authentication Type=None
     Storage Section
         AWS Root path=s3://warehouse
-        AWS Access Key=[MINIO_ACCESS_KEY from .env]
-        AWS Secret Key=[MINIO_SECRET_ACCESS_KEY from .env]
+        AWS Access Key=minioadmin
+        AWS Secret Key=minioadmin
         Encrypt Connection=Unchecked
     ```
 1. Add the following custom connection properties and then add the source to Dremio:

@@ -1,5 +1,4 @@
 
 notebooks/.ipynb_checkpoints/
 
-.env
 data/*.parquet
