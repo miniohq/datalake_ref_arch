@@ -1,4 +1,4 @@
-# Modern Datalake Reference Architecture
+# Modern Datalake Reference Tech Stack
 This repo contains the configuration necessary to spin up a MinIO powered open-source and modern data lake. It can be used for training, experimentation, curriculum development, and hands-on demonstration. It is not production-grade.
 
 ### Key Components
