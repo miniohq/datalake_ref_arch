@@ -3,36 +3,66 @@ version: "3.9"
 services:
   dremio:
     platform: linux/x86_64
-    image: dremio/dremio-oss:latest
+    image: dremio/dremio-oss:24.3.2
     ports:
-      - 9047:9047
+      - 9053:9047
       - 31010:31010
       - 32010:32010
     container_name: dremio
 
+  dremiosetup:
+    image: dwdraju/alpine-curl-jq:latest
+    volumes:
+      - ./:/home/docker/init_scripts
+    depends_on:
+      - dremio
+    restart: "no"
+    entrypoint: [ "sh", "-c", "sleep 30 && sh /home/docker/init_scripts/init_dremio.sh"]
+    container_name: dremiosetup
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+
   minioserver:
-    image: minio/minio
+    image: quay.io/minio/minio:RELEASE.2024-02-06T21-36-22Z
     ports:
-      - 9000:9000
-      - 9001:9001
+      - 9050:9000
+      - 9051:9001
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
     container_name: minio
+    volumes:
+      - ./:/data
     command: server /data --console-address ":9001"
 
   spark_notebook:
-    image: spark_notebook
+    image: dinyes/spark_notebook:0.9
     volumes:
-      - ./notebooks:/home/docker/notebooks
-      - ./data/:/home/docker/notebooks/data
+      - ./code_artifacts:/home/docker/code_artifacts
+      - ./data/:/home/docker/data
     ports: 
-      - 8888:8888
+      - 9070:8888
     env_file: .env
     container_name: notebook
+    command: "/home/docker/.local/bin/jupyter-lab --notebook-dir=/home/docker/code_artifacts --NotebookApp.token='' --no-browser --allow-root --ip 0.0.0.0"
+    profiles:
+      - with_ipython_notebook
+  
+  insight_service:
+    image: dinyes/spark_notebook:0.9
+    volumes:
+      - ./code_artifacts:/home/docker/code_artifacts
+      - ./data/:/home/docker/data
+    ports:
+      - 7203:7203
+    env_file: .env
+    container_name: insight_service
+    command: ["python3","-u","/home/docker/code_artifacts/pdf_insight_extractor.py"]
+    profiles:
+      - pdf_insight_extractor
   
   nessie:
-    image: projectnessie/nessie
+    image: projectnessie/nessie:0.76.6
     container_name: nessie
     ports:
       - "19120:19120"
@@ -40,4 +70,4 @@ services:
 networks:
   default:
     name: iceberg_env
-    driver: bridge 
+    driver: bridge
