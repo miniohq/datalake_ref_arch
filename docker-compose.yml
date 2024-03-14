@@ -10,18 +10,6 @@ services:
       - 32010:32010
     container_name: dremio
 
-  dremiosetup:
-    image: dwdraju/alpine-curl-jq:latest
-    volumes:
-      - ./:/home/docker/init_scripts
-    depends_on:
-      - dremio
-    restart: "no"
-    entrypoint: [ "sh", "-c", "sleep 30 && sh /home/docker/init_scripts/init_dremio.sh"]
-    container_name: dremiosetup
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
-
   minioserver:
     image: quay.io/minio/minio:RELEASE.2024-02-06T21-36-22Z
     ports:
@@ -32,7 +20,7 @@ services:
       MINIO_ROOT_PASSWORD: minioadmin
     container_name: minio
     volumes:
-      - ./:/data
+      - minio-data:/data
     command: server /data --console-address ":9001"
 
   spark_notebook:
@@ -71,3 +59,6 @@ networks:
   default:
     name: iceberg_env
     driver: bridge
+
+volumes:
+  minio-data:
