@@ -1,6 +1,13 @@
 # Modern Datalake Reference Tech Stack
 This repo contains the configuration necessary to spin up a MinIO powered open-source and modern data lake. It can be used for training, experimentation, curriculum development, and hands-on demonstration. It is not production-grade.
 
+### System Dependencies
+The following system level dependencies must be installed before using this repository. Please refer to the links below for OS specfic instruction on how to install:
+* [Docker](https://docs.docker.com/engine/install/)
+* [Docker Compose](https://docs.docker.com/compose/install/)
+* [mc](https://min.io/docs/minio/linux/reference/minio-mc.html)
+* [jq](https://jqlang.github.io/jq/download/)
+
 ### Key Components
 - [MinIO](https://min.io/docs/minio/linux/index.html) - S3 compatible object storage layer for data
 - [Dremio](https://docs.dremio.com/) - A lakehouse management service that offers a data catalog, SQL interface, and Iceberg compatible compute engine.
