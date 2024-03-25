@@ -32,7 +32,7 @@ services:
   spark_notebook:
     image: dinyes/spark_notebook:0.9
     volumes:
-      - ./code_artifacts:/home/docker/code_artifacts
+      - ./notebooks:/home/docker/code_artifacts
       - ./data/:/home/docker/data
     ports: 
       - 9070:8888
@@ -41,19 +41,6 @@ services:
     command: "/home/docker/.local/bin/jupyter-lab --notebook-dir=/home/docker/code_artifacts --NotebookApp.token='' --no-browser --allow-root --ip 0.0.0.0"
     profiles:
       - with_ipython_notebook
-  
-  insight_service:
-    image: dinyes/spark_notebook:0.9
-    volumes:
-      - ./code_artifacts:/home/docker/code_artifacts
-      - ./data/:/home/docker/data
-    ports:
-      - 7203:7203
-    env_file: .env
-    container_name: insight_service
-    command: ["python3","-u","/home/docker/code_artifacts/pdf_insight_extractor.py"]
-    profiles:
-      - pdf_insight_extractor
 
 networks:
   default:
