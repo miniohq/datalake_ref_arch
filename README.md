@@ -54,7 +54,7 @@ The following system level dependencies must be installed before using this repo
     Dremio first time lab initialization complete
     -----------------------------------------------
     ```
-1. Login to Dremio at http://localhost:9047/ using username=admin password=bad4admins.
+1. Login to Dremio at http://localhost:9053/ using username=admin password=bad4admins.
 1. You should now be able to run [SQL](https://docs.dremio.com/current/reference/sql) commands using the Dremio SQL runner against the iceberg tables in the datalake. For example you can try this:
     ```SQL
     # Create a fact_orders table partitioned by day:
